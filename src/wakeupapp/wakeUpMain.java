@@ -1,89 +1,77 @@
 package wakeupapp;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class wakeUpMain {
+    public static String personnummer;
     public static void main(String[] args) {
+        //SsnValidation ssnvalidation = new SsnValidation();
+        //ssnvalidation.doTheThings();
         doTheThings();
     }
 
 
     private static void doTheThings() {
-        boolean inloggning = false;
-        boolean exit = false;
+
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println(
-                "1. Bli medlem\n" +
-                        "2. Logga in\n" +
-                        "3. Boka plats på aktivitet\n" +
-                        "4. Avsluta");
-        System.out.println("Type in your choise");
-        int navigateInMenu = Integer.parseInt(scanner.next());
-        System.out.println(navigateInMenu);
-        if (navigateInMenu >= 5 || navigateInMenu < 1) {
-            doTheThings();
-        }
+        int navigateInMenu = 0;
+
+        do {
+            System.out.println(
+                    "1. Bli medlem\n" +
+                            "2. Logga in\n" +
+                            "3. Boka plats på aktivitet\n" +
+                            "4. Avsluta++++++++");
+            System.out.println("Type in your choise");
+
+            navigateInMenu = Integer.parseInt(scanner.next());
+            System.out.println(navigateInMenu);
+
+        } while (navigateInMenu < 1 || navigateInMenu > 4);
+
         System.out.println("Type in SSN");
-        String personnummer = scanner.next();
+        personnummer = scanner.next();
         System.out.println(personnummer);
-        if (personnummer.length() != 10) {
+
+        SsnValidation validation = new SsnValidation(personnummer);
+
+        if (!validation.valid) {
             System.out.println("not enjuph");
-        } else {
-            inloggning = validateCardNumber(personnummer);
-            System.out.println(inloggning + " v uslovii");
+            return;
         }
-        System.out.println(inloggning + " vne usloviya");
-        if (inloggning) {
-            do {
-                switch (navigateInMenu) {
-                    case 1:
-                        System.out.println("\"1. Bli medlem\\n\"");
-                        getTheSubscription();
-                        break;
-                    case 2:
-                        System.out.println("2. Logga in\n");
-                        break;
-                    case 3:
-                        System.out.println("3. Boka plats på aktivitet\n");
-                        break;
-                    case 4:
-                        System.out.println("4. Avsluta");
-                        break;
-                    case 5:
-                        exit = true;
-                        break;
-                }
 
-            } while (exit);
-        }
-    }
+        boolean exit = false;
 
-    private static boolean validateCardNumber(String cardNummer) {
-        String value = cardNummer;
-        int sum = 0;
-        int controlNumber = Integer.parseInt(value.substring(9, 10));
-        System.out.println(controlNumber + "control");
-        String valueWithoutControlNumber = value.substring(0, 9);
-        int numberOfIterations = valueWithoutControlNumber.length();
-        System.out.println(numberOfIterations + " Количество итераций");
-        for (int index = 0; index <= numberOfIterations - 1; index++) {
-            int digit = valueWithoutControlNumber.charAt(index) - '0';
-            System.out.println(digit);
-            if (index % 2 == 0) {
+        do {
+            switch (navigateInMenu) {
+                case 1:
+                    System.out.println("\"1. Bli medlem\\n\"");
+                    getTheSubscription();
+                    break;
+                case 2:
+                    System.out.println("2. Logga in\n");
+                    System.out.println("Du är inloggad");
 
-
-                digit = digit * 2;
-                System.out.println("by2");
-                if (digit > 9) {
-                    digit -= 9;
-                }
+                    break;
+                case 3:
+                    System.out.println("3. Boka plats på aktivitet\n");
+                    bookTheActivity();
+                    break;
+                case 4:
+                    System.out.println("4. Avsluta");
+                    break;
+                case 5:
+                    exit = true;
+                    break;
             }
 
-            sum += digit;
-            System.out.println(sum + "sum");
-        }
-        return ((sum + controlNumber) % 10 == 0);
+        } while (exit);
+
     }
+
 
     private static void getTheSubscription() {
         int monthlyPrice;
@@ -106,9 +94,71 @@ public class wakeUpMain {
         int totalPrice = monthlyPrice + 100;
         System.out.println(totalPrice);
     }
-}
+
+    private static void bookTheActivity() {
+        int choiseOfActivity=0;
+        do {
+            System.out.println(
+                    "1. Spinning\n" +
+                            "2. Aerobics\n" +
+                            "3. Yoga\n");
+
+            System.out.println("Type in your choise");
+            Scanner newScanner = new Scanner(System.in);
+
+             choiseOfActivity = newScanner.nextInt();
 
 
+        } while (choiseOfActivity < 1 || choiseOfActivity > 3);
+
+        do {
+            switch (choiseOfActivity) {
+                case 1:
+                    System.out.println("\"1. Spinningn\"");
+
+                    break;
+                case 2:
+                    System.out.println("2. Aerobic\n");
+                    System.out.println(personnummer);
+
+                    break;
+                case 3:
+                    System.out.println("3.Yoga\n");
+
+                    break;
+
+            }
+
+        } while (false);
+        String[] places = {
+                "1a","1b","1c",
+                "2a","2b","2c",
+                "3a","3b","3c",};
+        for ( int i=0;i<places.length;i++){
+            File f = new File(choiseOfActivity+places[i]);
+
+                try {
+
+                    if (f.createNewFile()) {
+                        System.out.println("Din plats på aktiviteten är " + places[i]);
+                        break;
+                    } else {
+                        if (i == places.length-1){
+                            System.out.println("Tyvärr har vi inga lediga platser");
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+
+                }
+            }
+        }
+
+    }
+
+
+    
 
 
 
